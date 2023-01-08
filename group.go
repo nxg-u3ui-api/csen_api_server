@@ -7,9 +7,9 @@ import (
 )
 
 type group struct {
-	bridge chan []byte
-	join chan *client
-	leave chan *client
+	bridge  chan []byte
+	join    chan *client
+	leave   chan *client
 	clients map[*client]bool
 }
 
@@ -21,7 +21,7 @@ func (r *group) run() {
 		case client := <-r.leave:
 			delete(r.clients, client)
 			close(client.send)
-		case msg := <- r.bridge:
+		case msg := <-r.bridge:
 			for client := range r.clients {
 				select {
 				case client.send <- msg:
@@ -36,12 +36,12 @@ func (r *group) run() {
 }
 
 const (
-	socketBufferSize = 1024
+	socketBufferSize  = 1024
 	messageBufferSize = 256
 )
 
 var upgrader = &websocket.Upgrader{
-	ReadBufferSize: socketBufferSize,
+	ReadBufferSize:  socketBufferSize,
 	WriteBufferSize: socketBufferSize}
 
 func (r *group) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -53,10 +53,10 @@ func (r *group) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 	client := &client{
 		socket: socket,
-		send: make(chan []byte, messageBufferSize),
+		send:   make(chan []byte, messageBufferSize),
 	}
 	r.join <- client
-	defer func() {r.leave <- client}()
+	defer func() { r.leave <- client }()
 	go client.write()
 	client.read()
 }

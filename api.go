@@ -1,14 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
-	"encoding/json"
 )
 
 type api struct {
 	group *group
-	//あとでこちら側でREADAndChannelを生成する
 }
 
 type Message struct {
@@ -32,4 +31,3 @@ func (api *api) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 	api.group.bridge <- data
 }
-	

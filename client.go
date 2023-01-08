@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
 	"github.com/gorilla/websocket"
+	"log"
 )
 
 type client struct {
 	socket *websocket.Conn
-	send chan []byte
+	send   chan []byte
 }
 
 func (c *client) read() {
