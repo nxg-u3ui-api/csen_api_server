@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"flag"
 	"net/http"
 	"sync"
 	"text/template"
@@ -32,6 +33,9 @@ func newGroup() *group {
 
 func main() {
 
+	var addr = flag.String("addr", ":8090", "server address:port")
+	flag.Parse()
+
 	g := newGroup()
 	api := new(api)
 	api.group = g
@@ -40,7 +44,8 @@ func main() {
 	http.Handle("/api", api)
 	go g.run()
 
-	if err := http.ListenAndServe(":8090", nil); err != nil {
-		log.Fatal("LisntenAndServe: ", err)
+	log.Println("bind address: ", *addr)
+	if err := http.ListenAndServe(*addr, nil); err != nil {
+		log.Fatal("ListenAndServe: ", err)
 	}
 }
